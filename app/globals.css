@@ -1,8 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f3f4f6;
+  --foreground: #1f2937;
+  --card-background: #ffffff;
+  --border-color: #e5e7eb;
+
+  /* Agent colors */
+  --planner-color: #8b5cf6;
+  --planner-bg: #f5f3ff;
+  --worker-color: #3b82f6;
+  --worker-bg: #eff6ff;
+  --safety-color: #ef4444;
+  --safety-bg: #fef2f2;
+  --system-color: #6b7280;
+  --system-bg: #f9fafb;
+  --director-color: #10b981;
+  --director-bg: #ecfdf5;
 }
 
 @theme inline {
@@ -12,15 +26,190 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Agent message styling */
+.agent-msg {
+  border-left-width: 4px;
+  border-left-style: solid;
+}
+
+.agent-msg.planner {
+  border-left-color: var(--planner-color);
+  background: var(--planner-bg);
+}
+
+.agent-msg.worker {
+  border-left-color: var(--worker-color);
+  background: var(--worker-bg);
+}
+
+.agent-msg.safety {
+  border-left-color: var(--safety-color);
+  background: var(--safety-bg);
+}
+
+.agent-msg.system {
+  border-left-color: var(--system-color);
+  background: var(--system-bg);
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.agent-msg.director {
+  border-left-color: var(--director-color);
+  background: var(--director-bg);
+}
+
+/* Scrollbar styling */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Animation for new messages */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-enter {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Pulse animation for active indicators */
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* Code block styling */
+code {
+  font-family: var(--font-geist-mono), monospace;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+/* Markdown content styling */
+.markdown-content {
+  line-height: 1.6;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.markdown-content pre {
+  margin: 0.5rem 0;
+  font-size: 0.8125rem;
+}
+
+.markdown-content pre code {
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+}
+
+.markdown-content hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 1rem 0;
+}
+
+.markdown-content strong {
+  font-weight: 600;
+}
+
+.markdown-content em {
+  font-style: italic;
+}
+
+.markdown-content img {
+  max-width: 100%;
+  border-radius: 0.375rem;
+}
+
+/* Sidebar transition enhancements */
+aside {
+  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+/* Focus states for accessibility */
+button:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* Selection styling */
+::selection {
+  background: rgba(99, 102, 241, 0.2);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Improved loading spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Details/summary styling for collapsible sections */
+details summary {
+  user-select: none;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Task progress bar animation */
+@keyframes progress-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.progress-bar-animated {
+  animation: progress-pulse 2s ease-in-out infinite;
 }
