@@ -22,11 +22,11 @@ export default function RightSidebar({
   }
 
   return (
-    <aside className="w-80 bg-white border-l flex flex-col overflow-hidden transition-all duration-300 ease-in-out">
+    <aside className="w-80 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden transition-all duration-300 ease-in-out">
       {/* Header */}
-      <div className="p-4 border-b bg-gray-50">
-        <h2 className="font-semibold text-gray-800">Squad Details</h2>
-        <p className="text-xs text-gray-500 mt-0.5">Members, tasks, and context</p>
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Squad Details</h2>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Members, tasks, and context</p>
       </div>
 
       <div className="flex-1 overflow-y-auto scrollbar-thin p-4 space-y-6">
@@ -38,11 +38,11 @@ export default function RightSidebar({
                 <MemberCard key={member.agent.agentId} member={member} />
               ))
             ) : (
-              <div className="p-3 text-center text-xs text-gray-400 bg-gray-50 rounded border border-dashed">
+              <div className="p-3 text-center text-xs text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-800 rounded border border-dashed dark:border-gray-700">
                 No agents in squad
               </div>
             )}
-            <div className="p-2 border border-dashed border-gray-300 rounded text-center text-xs text-gray-400 hover:bg-gray-50 transition-colors">
+            <div className="p-2 border border-dashed border-gray-300 dark:border-gray-600 rounded text-center text-xs text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
               + Waiting for agents...
             </div>
           </div>
@@ -113,7 +113,7 @@ function CollapsibleSection({ title, defaultOpen = false, count, children }: Col
   return (
     <details open={defaultOpen} className="group">
       <summary className="flex items-center justify-between cursor-pointer list-none mb-2">
-        <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+        <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-2">
           <svg
             className="w-3 h-3 text-gray-400 transition-transform group-open:rotate-90"
             fill="none"
@@ -125,7 +125,7 @@ function CollapsibleSection({ title, defaultOpen = false, count, children }: Col
           {title}
         </h3>
         {count !== undefined && (
-          <span className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full">
+          <span className="text-[10px] bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-1.5 py-0.5 rounded-full">
             {count}
           </span>
         )}
@@ -147,7 +147,7 @@ function MemberCard({ member }: MemberCardProps) {
   };
 
   return (
-    <div className="flex items-center justify-between p-2.5 bg-gray-50 rounded border hover:bg-white transition-colors">
+    <div className="flex items-center justify-between p-2.5 bg-gray-50 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-750 transition-colors">
       <div className="flex items-center gap-2 min-w-0">
         <div className="relative">
           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white ${
@@ -202,7 +202,7 @@ function TaskCard({ task, onApprove }: TaskCardProps) {
   const config = statusConfig[task.status] || statusConfig.PENDING;
 
   return (
-    <div className="p-3 border rounded-lg bg-white shadow-sm hover:shadow transition-shadow">
+    <div className="p-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow transition-shadow">
       <div className="flex justify-between items-start mb-2">
         <span className="text-sm font-medium truncate max-w-[180px]">{task.title}</span>
         <span className={`text-[10px] ${config.bg} ${config.text} px-1.5 py-0.5 rounded flex-shrink-0`}>

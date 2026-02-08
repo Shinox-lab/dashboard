@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { Squad, Message, AgentType } from '../types';
 import MessageBubble from './MessageBubble';
 import { squadAPI } from '../lib/api';
@@ -13,12 +13,42 @@ interface ChatAreaProps {
 
 export default function ChatArea({ squad, messages, onSendMessage }: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [isHalting, setIsHalting] = useState(false);
+  const [isNearBottom, setIsNearBottom] = useState(true);
+  const [hasNewMessages, setHasNewMessages] = useState(false);
+  const prevMessagesLengthRef = useRef(messages.length);
 
-  useEffect(() => {
+  const SCROLL_THRESHOLD = 150; // px from bottom to consider "near bottom"
+
+  const handleScroll = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+    const nearBottom = distanceFromBottom <= SCROLL_THRESHOLD;
+    setIsNearBottom(nearBottom);
+    if (nearBottom) {
+      setHasNewMessages(false);
+    }
+  }, []);
+
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    setHasNewMessages(false);
+  }, []);
+
+  // Only auto-scroll when near bottom; show indicator otherwise
+  useEffect(() => {
+    const hasNew = messages.length > prevMessagesLengthRef.current;
+    prevMessagesLengthRef.current = messages.length;
+
+    if (isNearBottom) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    } else if (hasNew) {
+      setHasNewMessages(true);
+    }
+  }, [messages, isNearBottom]);
 
   const handleForceHalt = async () => {
     if (!squad || isHalting) return;
@@ -44,8 +74,8 @@ export default function ChatArea({ squad, messages, onSendMessage }: ChatAreaPro
 
   if (!squad) {
     return (
-      <main className="flex-1 flex flex-col bg-white relative items-center justify-center">
-        <div className="text-center text-gray-400">
+      <main className="flex-1 flex flex-col bg-white dark:bg-gray-900 relative items-center justify-center">
+        <div className="text-center text-gray-400 dark:text-gray-500">
           <svg className="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -77,12 +107,12 @@ export default function ChatArea({ squad, messages, onSendMessage }: ChatAreaPro
   };
 
   return (
-    <main className="flex-1 flex flex-col bg-white relative">
+    <main className="flex-1 flex flex-col bg-white dark:bg-gray-900 relative">
       {/* Squad Header */}
-      <div className="px-6 py-3 border-b flex justify-between items-center bg-gray-50/50">
+      <div className="px-6 py-3 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
         <div className="min-w-0 flex-1 mr-4">
           <div className="flex items-center gap-2">
-            <h2 className="font-bold text-gray-800 truncate">
+            <h2 className="font-bold text-gray-800 dark:text-gray-100 truncate">
               {squad.name || `Squad #${squad.squadId.slice(0, 8)}`}
             </h2>
             <span className={`text-[10px] px-1.5 py-0.5 rounded shrink-0 ${
@@ -93,16 +123,16 @@ export default function ChatArea({ squad, messages, onSendMessage }: ChatAreaPro
               {squad.status}
             </span>
           </div>
-          <p className="text-xs text-gray-500 truncate mt-0.5">Goal: {squad.goal}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">Goal: {squad.goal}</p>
         </div>
         <div className="flex gap-2 shrink-0">
-          <button className="px-3 py-1.5 bg-white border rounded text-xs hover:bg-gray-50 shadow-sm transition-colors">
+          <button className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 shadow-sm transition-colors">
             View Kafka Log
           </button>
           <button
             onClick={handleForceHalt}
             disabled={isHalting}
-            className="px-3 py-1.5 bg-white border rounded text-xs shadow-sm text-red-500 border-red-200 transition-colors hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 bg-white dark:bg-gray-800 border rounded text-xs shadow-sm text-red-500 dark:text-red-400 border-red-200 dark:border-red-800 transition-colors hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isHalting ? 'Halting...' : 'Force Halt'}
           </button>
@@ -110,10 +140,14 @@ export default function ChatArea({ squad, messages, onSendMessage }: ChatAreaPro
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin">
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin relative"
+      >
         {squad.triggerSource && (
           <div className="mx-auto max-w-2xl text-center my-4">
-            <span className="bg-gray-200 text-gray-600 px-3 py-1 rounded-full text-xs">
+            <span className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full text-xs">
               Trigger: {squad.triggerSource}
             </span>
           </div>
@@ -149,14 +183,29 @@ export default function ChatArea({ squad, messages, onSendMessage }: ChatAreaPro
         <div ref={messagesEndRef} />
       </div>
 
+      {/* New messages indicator */}
+      {hasNewMessages && (
+        <div className="flex justify-center -mt-2 mb-1 relative z-10">
+          <button
+            onClick={scrollToBottom}
+            className="px-3 py-1.5 bg-indigo-600 text-white text-xs rounded-full shadow-lg hover:bg-indigo-700 transition-colors flex items-center gap-1.5 animate-bounce"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+            New messages
+          </button>
+        </div>
+      )}
+
       {/* Input */}
-      <div className="p-4 border-t bg-white">
+      <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
         <form onSubmit={handleSubmit} className="max-w-3xl mx-auto relative">
           <input
             ref={inputRef}
             type="text"
             placeholder="Intervene as Human Admin..."
-            className="w-full pl-4 pr-12 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            className="w-full pl-4 pr-12 py-3 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
           />
           <button
             type="submit"

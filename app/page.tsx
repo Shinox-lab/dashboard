@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { Header, SquadList, ChatArea, RightSidebar } from './components';
+import { Header, SquadList, ChatArea, RightSidebar, SettingsModal } from './components';
 import { Squad, Message, Task, RAGContext } from './types';
 import { squadAPI, taskAPI, messageAPI, healthAPI, WS_URL } from './lib/api';
 
@@ -28,6 +28,7 @@ export default function Home() {
   // Sidebar state
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
   const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -310,6 +311,14 @@ export default function Home() {
     setRightSidebarOpen((prev) => !prev);
   }, []);
 
+  const openSettings = useCallback(() => {
+    setSettingsOpen(true);
+  }, []);
+
+  const closeSettings = useCallback(() => {
+    setSettingsOpen(false);
+  }, []);
+
   if (isLoading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-100">
@@ -345,12 +354,13 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen flex flex-col font-sans text-sm text-gray-800 bg-gray-100">
+    <div className="h-screen flex flex-col font-sans text-sm text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-950">
       <Header
         wsConnected={wsConnected}
         apiConnected={apiConnected}
         onToggleLeftSidebar={toggleLeftSidebar}
         onToggleRightSidebar={toggleRightSidebar}
+        onOpenSettings={openSettings}
         leftSidebarOpen={leftSidebarOpen}
         rightSidebarOpen={rightSidebarOpen}
       />
@@ -377,6 +387,8 @@ export default function Home() {
           isOpen={rightSidebarOpen}
         />
       </div>
+
+      <SettingsModal isOpen={settingsOpen} onClose={closeSettings} />
     </div>
   );
 }

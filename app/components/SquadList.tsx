@@ -29,16 +29,16 @@ export default function SquadList({ squads, selectedSquadId, onSelectSquad, isOp
   }
 
   return (
-    <aside className="w-72 bg-gray-50 border-r flex flex-col transition-all duration-300 ease-in-out">
+    <aside className="w-72 bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-all duration-300 ease-in-out">
       {/* Header */}
-      <div className="p-4 border-b bg-white">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-gray-800">Active Squads</h2>
+          <h2 className="font-semibold text-gray-800 dark:text-gray-100">Active Squads</h2>
           <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-medium">
             {squads.length}
           </span>
         </div>
-        <p className="text-xs text-gray-500 mt-1">Select a squad to view messages</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Select a squad to view messages</p>
       </div>
 
       {/* Squad list */}
@@ -82,16 +82,16 @@ function SquadCard({ squad, isSelected, onSelect }: SquadCardProps) {
   return (
     <div
       onClick={onSelect}
-      className={`p-3 border-b cursor-pointer transition-all duration-200 hover:bg-white ${
+      className={`p-3 border-b border-gray-200 dark:border-gray-700 cursor-pointer transition-all duration-200 hover:bg-white dark:hover:bg-gray-800 ${
         isSelected
-          ? 'bg-white border-l-4 border-l-indigo-500 shadow-sm'
-          : 'border-l-4 border-l-transparent hover:border-l-gray-300'
+          ? 'bg-white dark:bg-gray-800 border-l-4 border-l-indigo-500 shadow-sm'
+          : 'border-l-4 border-l-transparent hover:border-l-gray-300 dark:hover:border-l-gray-600'
       }`}
     >
       {/* Header row */}
       <div className="flex justify-between items-start gap-2 mb-1.5">
         <div className="flex items-center gap-1.5 min-w-0 flex-1">
-          <span className={`font-semibold text-sm truncate ${isSelected ? 'text-indigo-700' : 'text-gray-700'}`}>
+          <span className={`font-semibold text-sm truncate ${isSelected ? 'text-indigo-700 dark:text-indigo-400' : 'text-gray-700 dark:text-gray-200'}`}>
             {squad.name || squad.squadId}
           </span>
         </div>
@@ -108,7 +108,7 @@ function SquadCard({ squad, isSelected, onSelect }: SquadCardProps) {
       </div>
 
       {/* Goal */}
-      <p className="text-xs text-gray-500 line-clamp-2 mb-2">{squad.goal}</p>
+      <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-2">{squad.goal}</p>
 
       {/* Footer row */}
       <div className="flex items-center justify-between">
