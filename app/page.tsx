@@ -354,7 +354,7 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen flex flex-col font-sans text-sm text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-950">
+    <div className="h-screen flex flex-col text-sm text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-950">
       <Header
         wsConnected={wsConnected}
         apiConnected={apiConnected}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { CSSProperties, useEffect, useRef } from 'react';
 import {
   useSettings,
   ThemeMode,
@@ -22,12 +22,12 @@ const FONT_OPTIONS: { value: FontFamily; label: string; preview: string }[] = [
   { value: 'system', label: 'System Default', preview: 'The quick brown fox jumps over the lazy dog' },
 ];
 
-const FONT_PREVIEW_CLASS: Record<FontFamily, string> = {
-  'geist': 'font-[var(--font-geist-sans)]',
-  'inter': 'font-[var(--font-inter)]',
-  'jetbrains-mono': 'font-[var(--font-jetbrains-mono)]',
-  'fira-code': 'font-[var(--font-fira-code)]',
-  'system': 'font-sans',
+const FONT_PREVIEW_STYLE: Record<FontFamily, CSSProperties> = {
+  'geist': { fontFamily: 'var(--font-geist-sans)' },
+  'inter': { fontFamily: 'var(--font-inter)' },
+  'jetbrains-mono': { fontFamily: 'var(--font-jetbrains-mono)' },
+  'fira-code': { fontFamily: 'var(--font-fira-code)' },
+  'system': { fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' },
 };
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
@@ -130,7 +130,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   >
                     <div>
                       <span className="font-medium text-gray-800 dark:text-gray-200">{font.label}</span>
-                      <p className={`text-[11px] text-gray-400 dark:text-gray-500 mt-0.5 ${FONT_PREVIEW_CLASS[font.value]}`}>
+                      <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5" style={FONT_PREVIEW_STYLE[font.value]}>
                         {font.preview}
                       </p>
                     </div>
