@@ -52,6 +52,23 @@ async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> 
   return response.json();
 }
 
+// Dispatch endpoints
+export const dispatchAPI = {
+  send: (event: DispatchEvent) =>
+    fetchAPI<{ session_id: string; selected_agents: string[]; briefing: string }>(
+      '/api/dispatch',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          event_type: event.type,
+          source: event.source,
+          payload: event.payload,
+          priority: event.priority || 'NORMAL',
+        }),
+      }
+    ),
+};
+
 // Squad endpoints
 export const squadAPI = {
   getAll: (status?: string) => {
